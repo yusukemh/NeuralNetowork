@@ -30,8 +30,35 @@ y_te = np.array(y_te.loc[:,'NR.AR'])
 label = np.array(np.where(y_tr == 1)).flatten()
 label_2 = np.array(np.where(y_tr == 0)).flatten()
 a = np.concatenate((label, label_2[:383]))
+
+#handle the unbalanced data
+from sklearn.utils import resample
+y_tr = y_tr.reshape(-1,1)
+Train = np.hstack((y_tr, x_tr))
+#print("train:", Train.shape)
+
+y_te = y_te.reshape(-1,1)
+Test = np.hstack((y_te, x_te))
+#print("Test:", Test.shape)
+
+x_tr_majority = Train[Train[:,0] == 0,:]
+x_tr_minority = Train[Train[:,0] == 1,:]
+
+#print(x_tr_majority.shape)
+#print(x_tr_minority.shape)
+minority_upsampled = resample(x_tr_minority, 
+                              replace=True,     # sample with replacement
+                              n_samples=11677,  # to match majority class
+                              random_state=123) # reproducible results
+Train = np.vstack((x_tr_majority, minority_upsampled))
+#print(Train.shape)
+
+y_tr_new = Train[:,0]
+x_tr_new = Train[:,1:]
 '''
-model = NeuralNetwork.NNClassifier([50,50], learning_rate = 0.01, batch_size = 100, epochs = 100)
+model = NeuralNetwork.NNClassifier([30,30,30], learning_rate = 0.01, 
+                                    batch_size = 100, epochs = 100, early_stopping = True,
+                                    n_iter_no_change = 10, tol = 0.0001)
 #x_tr = x_tr[:,:]
 #y_tr = y_tr[:]
 
@@ -39,7 +66,7 @@ x_tr = sklearn.preprocessing.normalize(x_tr)
 x_te = sklearn.preprocessing.normalize(x_te)
 
 
-
+#print(x_tr.shape)
 model.fit(x_tr, y_tr)
 
 p_tr = model.predict_proba(x_tr)
