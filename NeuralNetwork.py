@@ -5,7 +5,8 @@ np.set_printoptions(precision=10)
 class NNClassifier():
     def __init__(self, hidden_layer_sizes, learning_rate = 0.08, batch_size = 200,
                 epochs = 100, early_stopping = False,
-                n_iter_no_change = 10, tol = 0.0001):
+                n_iter_no_change = 10, tol = 0.0001,
+                random_state = -1):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.learning_rate = learning_rate
         self.n_hidden_layers = len(hidden_layer_sizes)
@@ -14,6 +15,10 @@ class NNClassifier():
         self.epochs = epochs
         self.early_stopping = early_stopping
         self.n_iter_no_change = n_iter_no_change
+        if(random_state == -1):
+            self.random_state = np.random.randomint()
+        else:
+            self.random_state = random_state
         self.tol = tol
         self.W = {}
         self.Z = {}
@@ -22,6 +27,7 @@ class NNClassifier():
         
             
     def fit(self, X, Y):
+        np.random.seed(self.random_state)
         _lambda = 0.01
         #train using input data
         #Input: features x: NxD matrix

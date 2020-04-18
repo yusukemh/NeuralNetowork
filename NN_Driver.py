@@ -8,7 +8,6 @@ import NeuralNetwork
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 
-
 x_tr = pd.read_csv('tox21_dense_train.csv')
 x_tr = np.array(x_tr.iloc[:,1:])
 scaler.fit(x_tr)
@@ -58,7 +57,8 @@ x_tr_new = Train[:,1:]
 '''
 model = NeuralNetwork.NNClassifier([30,30,30], learning_rate = 0.01, 
                                     batch_size = 100, epochs = 100, early_stopping = True,
-                                    n_iter_no_change = 10, tol = 0.0001)
+                                    n_iter_no_change = 10, tol = 0.0001,
+                                    random_state = 20)
 #x_tr = x_tr[:,:]
 #y_tr = y_tr[:]
 
