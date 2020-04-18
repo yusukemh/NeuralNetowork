@@ -45,7 +45,7 @@ class NNClassifier():
         #Input: features x: NxD matrix
         #Output: labels y, a length N vector of 0s, 1s
         
-        #split the data
+        #split the data for early stopping
         if(self.early_stopping):
             X_train, X_valid, Y_train, Y_valid = train_test_split(X, Y, test_size=0.1)
         else:
@@ -56,8 +56,6 @@ class NNClassifier():
         #preprocess
         Y_valid = Y_valid.reshape(-1,1)
         Y_train = Y_train.reshape(-1,1)
-        
-        #divide the dataset if early_stopping is set True
 
         #incorporate the input and output layers
         self.layer_sizes.append(X_train.shape[1])
