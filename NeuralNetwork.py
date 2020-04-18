@@ -6,7 +6,7 @@ class NNClassifier():
     def __init__(self, hidden_layer_sizes, learning_rate = 0.08, batch_size = 200,
                 epochs = 100, early_stopping = False,
                 n_iter_no_change = 10, tol = 0.0001,
-                random_state = -1):
+                random_state = -1, verbose = False):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.learning_rate = learning_rate
         self.n_hidden_layers = len(hidden_layer_sizes)
@@ -20,10 +20,22 @@ class NNClassifier():
         else:
             self.random_state = random_state
         self.tol = tol
+        self.verbose = verbose
         self.W = {}
         self.Z = {}
         self.H = {}
         self.layer_sizes = []
+        if(verbose):
+            print("==========hyper parameters of this model==========")
+            print("hidden_layer_sizes:", hidden_layer_sizes)
+            print("learning_rate:", learning_rate)
+            print("batch_size:", batch_size)
+            print("epochs:", epochs)
+            print("early_stopping:", early_stopping)
+            print("n_iter_nochange:", n_iter_no_change)
+            print("tol:", tol)
+            print("random_state:", random_state)
+            print("==================================================")
         
             
     def fit(self, X, Y):
@@ -64,12 +76,14 @@ class NNClassifier():
         last_improve_epoch = 0#last epoch with improvement
         for epoch in range(self.epochs):
           #check for early stopping
-          print("Epoch:", epoch+1, "/", self.epochs)
+          if(self.verbose):
+              print("Epoch:", epoch+1, "/", self.epochs)
           if(self.early_stopping):
               loss_curr = self.cross_entropy(self.forward(X_valid), Y_valid)#calculate valid loss
               if(loss_prev - loss_curr < self.tol):#if no improvement observed
                   if(epoch - last_improve_epoch >= self.n_iter_no_change):#if reached the limit, return to caller
-                      print("EARLY STOPPING")
+                      if(self.verbose):
+                          print("EARLY STOPPING")
                       return
               else:#if improvement observed
                   last_improve_epoch = epoch
